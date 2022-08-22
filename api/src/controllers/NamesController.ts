@@ -113,6 +113,34 @@ const NamesController = {
       })
     }
 
+  },
+
+  deleteName: (req: express.Request, res: express.Response) => {
+    const { _id } = req.body
+    if (_id) {
+      // Delete name from db
+      Name.deleteOne({ _id }).then(doc => {
+        if (doc) {
+          return res.send({
+            status: "success",
+            message: "The name has been deleted correctly",
+            name: doc
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+        return res.status(400).send({
+          status: "failed",
+          message: "There was an error trying to delete the name",
+          exceptionMessage: err
+        })
+      })
+    } else {
+      return res.status(404).send({
+        status: "failed",
+        message: "No name was sent",
+      })
+    }
   }
 
 

@@ -1,0 +1,126 @@
+import { useState, useEffect } from "react"
+import axios from "axios"
+
+import "./index.css"
+
+interface Name {
+  _id?: string;
+  name: string;
+  meaning: string;
+  origin: string;
+  isEditing?: boolean;
+}
+
+function App() {
+  const [isEditing, setIsEditing] = useState<boolean>()
+  const [editingRow, setEditingRow] = useState<Name>()
+  const [names, setNames] = useState<Name[]>([])
+
+  useEffect(() => {
+    // Get names from database
+    axios.get("http://localhost:8080/names")
+      .then(res => {
+        if (res.data && res.data?.status === "success") {
+          setNames(res.data?.names)
+        }
+      })
+  }, [])
+
+  const deleteName = (id: string) => {
+    // make request to delete name
+    axios.delete("http://localhost:8080/delete", {}, { _id: id }).then(res => {
+      console.log(res)
+    })
+
+  }
+
+  const handleSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      name: { value: string };
+      meaning: { value: string };
+      origin: { value: string };
+    };
+    const name = target.name.value ?? ""
+    const meaning = target.meaning.value ?? ""
+    const origin = target.origin.value ?? ""
+
+    // Make request to server
+    axios.post("http://localhost:8080/create_name", { name, meaning, origin })
+      .then(res => {
+        if (res.data?.status === "success") {
+          const name: Name = res.data.name
+          // The name has been added to the database
+          setNames(names => ([...names, name]))
+
+        } else if (res.data?.status === "failed") {
+          alert("El nombre ya existe en la base de datos")
+        }
+
+      })
+      .catch(err => {
+        console.error(err)
+      })
+
+
+  }
+
+  return (
+    <div className="App">
+      <h3>Formulario para crear un nombre</h3>
+      <form onSubmit={handleSubmit} >
+        {/* name, meaning, origin */}
+
+        <div className="form-fieldset">
+          <label htmlFor="name">Nombre: </label>
+          <input type={"text"} name="name" placeholder="Introduce el nombre... " />
+        </div>
+
+        <div className="form-fieldset">
+          <label htmlFor="meaning">Significado: </label>
+          <input type={"text"} name="meaning" placeholder="Introduce el significado... " />
+        </div>
+
+        <div className="form-fieldset">
+          <label htmlFor="origin">Origen: </label>
+          <input type={"text"} name="origin" placeholder="Introduce el código del país... " />
+        </div>
+
+        <div className="form-fieldset">
+          <input type={"submit"} value="Enviar" />
+        </div>
+
+      </form>
+
+      <div className="names-table-container">
+        <table className="names-table" >
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Significado</th>
+              <th>Origen</th>
+              <th>Editar</th>
+              <th>Eliminar</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {names?.map((value, index) => (
+              <tr key={index}>
+                <td>{value.name}</td>
+                <td>{value.meaning}</td>
+                <td>{value.origin}</td>
+                <td><button>Editar</button></td>
+                <td><button onClick={() => deleteName(value?._id ?? "")}>Eliminar</button></td>
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
+      </div>
+
+    </div >
+  );
+}
+
+export default App;
