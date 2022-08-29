@@ -1,0 +1,36 @@
+{
+  "name": "phone-app",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "author": {
+    "name": "RNE"
+  },
+  "keywords": [
+    "react-native",
+    "react-native-elements",
+    "react-native-template",
+    "expo"
+  ],
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@rneui/base": "4.0.0-rc.3",
+    "@rneui/themed": "4.0.0-rc.3",
+    "expo": "^46.0.0",
+    "expo-cli": "^6.0.5",
+    "expo-status-bar": "~1.4.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "react-native": "0.69.4",
+    "react-native-web": "~0.18.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6"
+  },
+  "private": true
+}

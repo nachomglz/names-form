@@ -86,6 +86,23 @@ const NamesController = {
     }
   },
 
+  getNamesQuantity: async (req: express.Request, res: express.Response) => {
+    const quantity = Name.countDocuments({}, (err: any, count: number) => {
+      if (err) {
+        return res.status(400).send({
+          status: "failed",
+          message: "There was an error getting the count of documents",
+        })
+      }
+      if (count) {
+        return res.send({
+          status: "success",
+          count
+        })
+      }
+    });
+  },
+
   getNames: async (req: express.Request, res: express.Response) => {
     let limit: number = parseInt(req.query.limit as string)
     limit = (limit === undefined || limit === null) ? 0 : limit
